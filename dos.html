@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<HTML LANG="de">
+
+<HEAD>
+  <TITLE>DOS | BitErlebnis</TITLE>
+    <META CHARSET="utf-8">
+    <META NAME="description" CONTENT="Analyse alter DOS Adventure Games.">
+    <META NAME="keywords" CONTENT="Adventure,DOS,Programmierung,Retro,SCUMM">
+  <LINK REL="stylesheet" HREF="style.css">
+</HEAD>
+
+<BODY ID="start">
+<DIV ID="wrap">
+
+<HEADER>
+<DIV ID="toptxt">BitErlebnis</DIV>
+<DIV ID="toptxtsmall">Retro . DOS . Adventure</DIV>
+<UL ID="topmenu">
+  <LI><A HREF="index.html" CLASS="home">C:\></A></LI>
+  <LI><A HREF="scumm.html">#SCUMM</A></LI>
+  <LI><A HREF="games.html">#GAMES</A></LI>
+  <LI><A HREF="#">#DOS</A></LI>
+</UL>
+</HEADER>
+
+<NAV>
+<UL>
+  <LI><DIV CLASS="menucap">Archiv</DIV></LI>
+  <LI><A HREF="#post1">:: Palette bearbeiten</A></LI>
+</UL>
+</NAV>
+
+<ARTICLE>
+<H1>#DOS - Alles unter Kontrolle</H1>
+<P ID="firstlet">Das Betriebssystem <A HREF="https://de.wikipedia.org/wiki/Disk_Operating_System" TARGET="_blank">DOS</A> kommuniziert direkt mit der Hardware. Elementare Kenntnisse hierzu sind damit unerlässlich.
+<BLOCKQUOTE><DIV ID="info">&#9432;</DIV>In dieser Blog-Kategorie werden in erster Linie die zwei wichtigsten Fragen zur Spieleprogrammierung behandelt.</BLOCKQUOTE></P>
+
+<UL ID="list">
+  <LI>Wie erwecke ich Grafik zum "Leben" ?</LI>
+  <LI>Wie entlocke ich dem System Musik ?</LI>
+</UL>
+
+<H2 ID="post1"><A HREF="#start" ID="back" TITLE="Zurück zum Anfang">▲</A>Farben der Palette bearbeiten</H2>
+<H3>VGA</H3>
+<P>Die Palette des Modus <I>13h</I> beinhaltet 256 (0-255) Farbeinträge im RGB-Format.</P>
+<FIGURE><IMG SRC="img/pal.png"><FIGCAPTION>Die 256 Standardfarben der VGA Palette</FIGCAPTION></FIGURE>
+
+<P>Jedem Pixel des <I>VRAM</I> ist eine Paletten-Nr linear zugeordnet.
+
+Zum Ändern oder Ermitteln der einzelnen Farben nutzen wir folgende <B>Ports</B>:</P>
+<UL ID="list">
+  <LI>3C7h - Befehl zum Auslesen</LI>
+  <LI>3C8h - Befehl zum Setzen</LI>
+  <LI>3C9h - R,G,B Daten</LI>
+</UL>
+<P>Die einzelnen RGB-Werte werden durch dreimaliges Aufrufen über den selben Port übertragen. Der Offset springt dabei automatisch an die nächste Stelle.
+
+&nbsp;&nbsp;&nbsp;<B>Setzen der Palette</B></P>
+<P ID="code">OUT &h3C8, [Pal-Nr]
+
+OUT &h3C9, red?
+OUT &h3C9, green?
+OUT &h3C9, blue?</P>
+
+<P>&nbsp;&nbsp;&nbsp;<B>Auslesen der Palette</B></P>
+<P ID="code">OUT &h3C7, [Pal-Nr]
+
+red? = INP(&h3C9)
+green? = INP(&h3C9)
+blue? = INP(&h3C9)</P>
+
+<H3>Mehrere Farben in einem Rutsch ändern</H3>
+<P>Leider existiert keine Funktion zum blockweisen Setzen der Palette. Somit müssen wir selbst Hand anlegen:</P>
+<P ID="code">! mov bl, [Start-Nr]
+! mov cx, [Anzahl]
+! mov dx, &h3C8
+pal:
+  ! mov al, bl
+  ! out dx, al
+  ! inc dl   ; = 3C9h
+
+  ! mov al, red?
+  ! out dx, al
+  ! mov al, green?
+  ! out dx, al
+  ! mov al, blue?
+  ! out dx, al
+
+  ! dec dl   ; = 3C8h
+  ! inc bl
+! loop pal
+
+/* Turbo C */
+for(i=[Start-Nr]; i<[End-Nr]; i++) {
+  outp(0x3C8, i);
+  outp(0x3C9, red);
+  outp(0x3C9, green);
+  outp(0x3C9, blue);
+}</P>
+</ARTICLE>
+
+</DIV>
+</BODY>
+</HTML>

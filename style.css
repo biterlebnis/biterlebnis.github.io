@@ -1,0 +1,212 @@
+body {
+  margin: 0;
+  background: white;
+}
+
+#wrap {
+  width: 85%;
+  max-width: 1024px;
+}
+
+header {
+  background: url("img/banner.png");
+  border-top-right-radius: 10px;
+}
+
+#toptxt {
+  padding: 20px 0 0 72%;
+  overflow: hidden;
+  font: bold 1.5em consolas, monospace;
+  color: gold;
+}
+
+#toptxtsmall {
+  padding-left: 70%;
+  font: italic 1em consolas, monospace;
+  color: snow;
+}
+
+#topmenu {
+  margin-top: 3px;
+  margin-bottom: 0;
+  height: 43px; 
+  background: url("img/topmenu.gif");
+  font: bold 0.8em arial, sans-serif;
+}
+
+#topmenu li { display: block }
+
+#topmenu li a:link, li a:visited {
+  padding: 8px 0 0 25px;
+  line-height: 25px;
+  text-decoration: none;
+  float: left;
+  color: #646464;
+}
+
+#topmenu li a.home {
+  padding: 8px 13px;
+  background: url("img/topmenuhome.gif");
+  font: bold 1.2em consolas, monospace;
+  color: snow;
+}
+
+#topmenu li a:hover { color: snow }
+
+nav {
+  width: 175px;
+  float: left;
+  font: 0.9em arial, sans-serif;
+}
+
+nav ul {
+  padding-left: 15px;
+  list-style-type: none;
+}
+
+nav li a:link, li a:visited {
+  margin-top: 2px;
+  padding-left: 10px;
+  text-decoration: none;
+  display: block;
+  background: #d7d7d7;
+  line-height: 25px;
+  color: #444444;
+}
+
+nav li a:hover { color: snow }
+
+nav li .menucap {
+  background-color: #0078b4;
+  font-weight: bold;
+  color: #eeeeee;
+  text-align: center;
+  line-height: 20px;
+  border: 3px double #d7d7d7;
+}
+
+nav img {
+  margin: 8px 5px 0 0;
+  float: left;
+}
+
+article {
+  margin-left: 200px;
+  background: #ffffd0;
+  background-image: url(img/textline.jpg);
+  background-repeat: repeat-y;
+  font: 1.0em/1.4em tahoma, sans-serif;
+  color: black;
+  overflow: hidden;
+  border-right: 2px dotted silver;
+  border-bottom: 2px solid silver;
+}
+
+p {
+  margin: 0 10px 8px 25px;
+  white-space: pre-wrap;
+}
+
+a:link, a:visited {
+  color: #0078b4;
+  text-decoration: none;
+}
+
+a:hover { text-decoration: underline }
+
+#code {
+  margin: 0 25px 20px 40px;
+  padding: 8px;
+  background-color: #27408b;
+  font: 1em consolas, monospace;
+  color: snow;
+  max-height: 150px;
+  overflow: auto;
+  border: 4px double silver;
+  border-radius: 8px;
+}
+
+h1 {
+  margin: 0 20px 20px 25px;
+  padding-top: 20px;
+  color: #a52a2a;
+}
+
+h2 {
+  margin: 20px 20px 10px 25px;
+  padding: 0 3px 3px 0;
+  font-size: 1.1em;
+  color: #0078b4;
+  border-right: 3px dotted #0078b4;
+  border-bottom: 3px dotted #0078b4;
+  border-bottom-right-radius: 10px;
+}
+
+h3 {
+  margin: 20px 10px 10px 25px;
+  font-size: 1.1em;
+  color: #0078b4;
+}
+
+#back {
+  margin-right: 8px;
+  text-decoration: none;
+}
+
+#firstlet:first-letter {
+  margin: 10px 8px 5px 0;
+  font-size: 2.5em;
+  text-shadow: 3px 2px silver;
+  color: #333333;
+  float:left;
+}
+
+#list {
+  margin-left: 10px;
+  list-style-image: url(img/listing.gif);
+  list-style-position: inside;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: green;
+}
+
+figure {
+  margin: 8px 20px 8px 25px;
+  float: left;
+  max-width: 60%;
+  background: snow;
+  border: 1px solid #333333;
+  border-bottom-right-radius: 15px;
+}
+
+figure img {
+  width: 100%;
+  border-bottom: 1px solid #333333;
+}
+
+figcaption {
+  margin: 0 10px 5px 10px;
+  font-size: 0.9em;
+  font-style: italic;
+  line-height: 18px;
+  color: #333333;
+}
+
+blockquote {
+  margin-top: 3px;
+  padding: 10px;
+  background: white;
+  font-size: 0.9em;
+  color: #333333;
+  float: left;
+  border: 1px dashed silver;
+  border-radius: 8px;
+}
+
+#info {
+  margin: 15px;
+  font-weight: bold;
+  font-size: 2.8em;
+  color: gray;
+  float: left;
+}

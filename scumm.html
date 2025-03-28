@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<HTML LANG="de">
+
+<HEAD>
+  <TITLE>SCUMM | BitErlebnis</TITLE>
+    <META CHARSET="utf-8">
+    <META NAME="description" CONTENT="Analyse alter DOS Adventure Games.">
+    <META NAME="keywords" CONTENT="Adventure,DOS,Programmierung,Retro,SCUMM">
+  <LINK REL="stylesheet" HREF="style.css">
+</HEAD>
+
+<BODY ID="start">
+<DIV ID="wrap">
+
+<HEADER>
+<DIV ID="toptxt">BitErlebnis</DIV>
+<DIV ID="toptxtsmall">Retro . DOS . Adventure</DIV>
+<UL ID="topmenu">
+  <LI><A HREF="index.html" CLASS="home">C:\></A></LI>
+  <LI><A HREF="#">#SCUMM</A></LI>
+  <LI><A HREF="games.html">#GAMES</A></LI>
+  <LI><A HREF="dos.html">#DOS</A></LI>
+</UL>
+</HEADER>
+
+<NAV>
+<UL>
+  <LI><DIV CLASS="menucap">Archiv</DIV></LI>
+  <LI><A HREF="#post1">:: Indexdatei</A></LI>
+</UL>
+</NAV>
+
+<ARTICLE>
+<H1>#SCUMM - Die legendäre Adventure Engine</H1>
+<P ID="firstlet">Abenteuerspielen wurde durch dieses Programmierwerkzeug der Durchbruch beschert. Wer sich hiermit auseinandersetzt muss zur Erkenntnis gelangen: <A HREF="https://de.wikipedia.org/wiki/Script_Creation_Utility_for_Maniac_Mansion" TARGET="_blank">Hier</A> handelt es sich um ein Meisterwerk! 
+<BLOCKQUOTE><DIV ID="info">&#9432;</DIV>Diese Blog-Kategorie geht in erster Linie den Fragen nach, wie die Abschnitte in den Spieldaten einzuordnen sind.</BLOCKQUOTE></P>
+
+<UL ID="list">
+  <LI>Wie kann ich den "Datensalat" entwirren ?</LI>
+  <LI>Wie werden die Grafiken "entpackt" ?</LI>
+  <LI>In welchem Format liegt die Musik vor ?</LI>
+</UL>
+
+<H2 ID="post1"><A HREF="#start" ID="back" TITLE="Zurück zum Anfang">▲</A>Leitfaden im Datenchaos - Der Index</H2>
+<P ID="firstlet">Die Indexdatei (0) teilt dem Interpreter mit, an welchen Stellen sich in den Spieldateien globale Daten befinden.</P>
+<FIGURE><IMG SRC="img/hexchaos.png"><FIGCAPTION>Ohne Hilfe keine Chance</FIGCAPTION></FIGURE>
+
+<H3>SCUMM v1</H3>
+<P>Die Datei beginnt mit zwei unbekannten Bytes. Hierauf folgen:</P>
+<UL ID="list">
+  <LI>Objekte (800/775)</LI>
+  <LI>Räume (55/61)</LI>
+  <LI>Kostüme (35/37)</LI>
+  <LI>Skripte (200/155)</LI>
+  <LI>Sound (100/120)</LI>
+</UL>
+<P>Im Gegensatz zu allen anderen Versionen, sind hier die Anzahl der Daten im Interpreter "<A HREF="https://de.wikipedia.org/wiki/Hartkodiert" TARGET="_blank">hartkodiert</A>". Daher beziehen sich die Angaben in der obigen Auflistung auf diese Anzahl (<I>Maniac</I> &harr; <I>Zak</I>).
+
+Die Objektdaten werden nach dem System von <I>v3(VGA)</I> eingelesen, jedoch ohne Klassenangaben. Die weitere Vorgehensweise entspricht der von <I>v2/v3(EGA)</I>, wobei das Byte für die Anzahl der Daten entfällt.
+
+&nbsp;&nbsp;&nbsp;<B>v1 Index auslesen</B></P>
+<P ID="code">DIM cost_offs(34/36) AS INTEGER, cost_room(34/36) AS BYTE, _
+room_offs(54/60) AS INTEGER, room_disk(54/60) AS BYTE, _
+script_offs(199/154) AS INTEGER, script_room(199/154) AS BYTE, _
+sound_offs(99/119) AS INTEGER, sound_room(99/119) AS BYTE, _
+state_owner(799/774, 1) AS BYTE
+
+OPEN "B", #1, "00.LFL"
+SEEK #1, 2   'Unbekannt
+
+FOR i% = 0 TO *
+   GET #1,, state_owner(i%, 0)   'state ↔ owner
+   state_owner(i%, 0) = state_owner(i%, 0) XOR &hFF
+   state_owner(i%, 1) = state_owner(i%, 0) AND &h0F
+   SHIFT RIGHT state_owner(i%, 0), 4
+NEXT
+
+FOR i% = 0 TO *
+   GET #1,, room_disk(i%)   'in ASCII
+   room_disk(i%) = room_disk(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO *
+   GET #1,, room_offs(i%)
+   room_offs(i%) = room_offs(i%) XOR &hFFFF
+NEXT
+
+FOR i% = 0 TO *
+   GET #1,, cost_room(i%)
+   cost_room(i%) = cost_room(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO *
+   GET #1,, cost_offs(i%)
+   cost_offs(i%) = cost_offs(i%) XOR &hFFFF
+NEXT
+
+FOR i% = 0 TO *
+   GET #1,, script_room(i%)
+   script_room(i%) = script_room(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO *
+   GET #1,, script_offs(i%)
+   script_offs(i%) = script_offs(i%) XOR &hFFFF
+NEXT
+
+FOR i% = 0 TO *
+   GET #1,, sound_room(i%)
+   sound_room(i%) = sound_room(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO *
+   GET #1,, sound_offs(i%)
+   sound_offs(i%) = sound_offs(i%) XOR &hFFFF
+NEXT
+
+CLOSE</P>
+
+<H3>SCUMM v2/v3(EGA)</H3>
+<P>Die Reihenfolge entspricht der von <I>v1</I>, wobei die Anzahl der Objekte hier zwei Byte beträgt.
+Der einzige Unterschied zwischen v2 und 3 ist, dass die Objekte bei v2 (wie auch 1) nicht über Klassenangaben verfügen.
+
+&nbsp;&nbsp;&nbsp;<B>v2/v3(EGA) Index auslesen</B></P>
+<P ID="code">OPEN "B", #1, "00.LFL"
+SEEK #1, 2   'Unbekannt
+
+GET #1,, nr%
+nr% = nr% XOR &hFFFF : DECR nr%
+DIM class(nr%) AS LONG   'nur bei v3(EGA)
+DIM state_owner(nr%, 1) AS BYTE
+FOR i% = 0 TO nr%
+   '>>> nur bei v3(EGA) >>>
+   GET #1,, cl1? : GET #1,, cl2? : GET #1,, cl3?   'nach Little-Endian
+   class(nr%) = cl3? : SHIFT LEFT class(nr%), 8
+   class(nr%) = class(nr%) OR cl2? : SHIFT LEFT class(nr%), 8
+   class(nr%) = class(nr%) OR cl1?
+   class(nr%) = class(nr%) XOR &hFFFFFF
+   '<<<<<<<<<<<<<<<<<<<<<<<
+
+   GET #1,, state_owner(i%, 0)   'state ↔ owner
+   state_owner(i%, 0) = state_owner(i%, 0) XOR &hFF
+   state_owner(i%, 1) = state_owner(i%, 0) AND &h0F
+   SHIFT RIGHT state_owner(i%, 0), 4
+NEXT
+
+GET #1,, nr?
+nr? = nr? XOR &hFF : DECR nr?
+DIM room_offs(nr?) AS WORD, room_disk(nr?) AS BYTE
+FOR i% = 0 TO nr?
+   GET #1,, room_disk(i%)   'in ASCII
+   room_disk(i%) = room_disk(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO nr?
+   GET #1,, room_offs(i%)
+   room_offs(i%) = room_offs(i%) XOR &hFFFF
+NEXT
+
+GET #1,, nr?
+nr? = nr? XOR &hFF : DECR nr?
+DIM cost_offs(nr?) AS WORD, cost_room(nr?) AS BYTE
+FOR i% = 0 TO nr?
+   GET #1,, cost_room(i%)
+   cost_room(i%) = cost_room(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO nr?
+   GET #1,, cost_offs(i%)
+   cost_offs(i%) = cost_offs(i%) XOR &hFFFF
+NEXT
+
+GET #1,, nr?
+nr? = nr? XOR &hFF : DECR nr?
+DIM script_offs(nr?) AS WORD, script_room(nr?) AS BYTE
+FOR i% = 0 TO nr?
+   GET #1,, script_room(i%)
+   script_room(i%) = script_room(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO nr?
+   GET #1,, script_offs(i%)
+   script_offs(i%) = script_offs(i%) XOR &hFFFF
+NEXT
+
+GET #1,, nr?
+nr? = nr? XOR &hFF : DECR nr?
+DIM sound_offs(nr?) AS WORD, sound_room(nr?) AS BYTE
+FOR i% = 0 TO nr?
+   GET #1,, sound_room(i%)
+   sound_room(i%) = sound_room(i%) XOR &hFF
+NEXT
+FOR i% = 0 TO nr?
+   GET #1,, sound_offs(i%)
+   sound_offs(i%) = sound_offs(i%) XOR &hFFFF
+NEXT
+
+CLOSE</P>
+
+<H3>SCUMM v3(VGA)/v4</H3>
+<P>Die Blocknamen stehen für:</P>
+<UL ID="list">
+  <LI>RN = RoomName (nur v4)</LI>
+  <LI>0R = Room</LI>
+  <LI>0S = Script</LI>
+  <LI>0N = Note? (Sound)</LI>
+  <LI>0C = Costume</LI>
+  <LI>0O = Object</LI>
+</UL>
+
+<P>Bei <I>v4</I> befinden sich im ersten Block die Namen der Räume. Die Raumnummer belegt hier nur ein Byte. Pro Name werden neun Byte (=9 ASCII Zeichen) verwendet, welche mit <B>0xFF</B> "verXORt" sind. Übrige Zeichen sind mit <B>\0</B> aufgefüllt. Auch der gesamte Block wird mit <B>\0</B> abgeschlossen.
+
+Der Objekt-Block weicht insofern von den anderen ab, dass hier kein <I>Datei/Offset</I>, sondern <I>class/state/owner</I> eingelesen wird.
+
+&nbsp;&nbsp;&nbsp;<B>v3(VGA)/v4 Index auslesen</B></P>
+<P ID="code">OPEN "B", #1, "000.LFL"   'bei v4 000.LFL
+
+'>>> nur bei v4 >>>
+GET #1,, block& : SEEK #1, block&
+'^Raumnamen erst überspringen da Raumanzahl noch unbekannt
+'<<<<<<<<<<<<<<<<<<
+
+GET #1, LOC(1)+6, nr%   'Header 6 Bytes
+DECR nr%
+DIM room_disk(nr%) AS BYTE, room_offs(nr%) AS LONG
+DIM room_name(nr%) AS STRING * 9   'nur bei v4
+FOR i% = 0 TO nr%
+   GET #1,, room_disk(i%)   'v3 in ASCII
+   GET #1,, room_offs(i%)
+NEXT
+
+GET #1, LOC(1)+6, nr% : DECR nr%
+DIM script_offs(nr%) AS LONG, script_room(nr%) AS BYTE
+FOR i% = 0 TO nr%
+   GET #1,, script_room(i%) : GET #1,, script_offs(i%)
+NEXT
+
+GET #1, LOC(1)+6, nr% : DECR nr%
+DIM sound_offs(nr%) AS LONG, sound_room(nr%) AS BYTE
+FOR i% = 0 TO nr%
+   GET #1,, sound_room(i%) : GET #1,, sound_offs(i%)
+NEXT
+
+GET #1, LOC(1)+6, nr% : DECR nr%
+DIM cost_offs(nr%) AS LONG, cost_room(nr%) AS BYTE
+FOR i% = 0 TO nr%
+   GET #1,, cost_room(i%) : GET #1,, cost_offs(i%)
+NEXT
+
+GET #1, LOC(1)+6, nr% : DECR nr%
+DIM class(nr%) AS LONG, state_owner(nr%, 1) AS BYTE
+FOR i% = 0 TO nr%
+   GET #1,, cl1? : GET #1,, cl2? : GET #1,, cl3?   'nach Little-Endian
+   class(nr%) = cl3? : SHIFT LEFT class(nr%), 8
+   class(nr%) = class(nr%) OR cl2? : SHIFT LEFT class(nr%), 8
+   class(nr%) = class(nr%) OR cl1?
+
+   GET #1,, state_owner(i%, 0)   'state ↔ owner
+   state_owner(i%, 1) = state_owner(i%, 0) AND &h0F
+   SHIFT RIGHT state_owner(i%, 0), 4
+NEXT
+
+'>>> nur bei v4 >>>
+SEEK #1, 6   'wieder zu den Raumnamen
+block& = block&\10-1   '9 Bytes für Name / 1 Byte für Raumnummer = 10 Bytes
+FOR i% = 0 TO block&
+   GET #1,, nr?
+   GET$ #1, 9, room_name(nr?)
+   FOR j% = 1 TO 9
+   	MID$(room_name(nr?), j%, 1) = CHR$(ASC(MID$(room_name(nr?), j%, 1)) _
+        XOR &hFF)
+   NEXT j%
+NEXT i%
+REM Abschlussbyte (0)
+'<<<<<<<<<<<<<<<<<<
+
+CLOSE</P>
+</ARTICLE>
+
+</DIV>
+</BODY>
+</HTML>
