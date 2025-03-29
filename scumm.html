@@ -14,7 +14,7 @@
 
 <HEADER>
 <DIV ID="toptxt">BitErlebnis</DIV>
-<DIV ID="toptxtsmall">Retro . DOS . Adventure</DIV>
+<DIV ID="toptxtsmall">Retro.DOS.Adventure</DIV>
 <UL ID="topmenu">
   <LI><A HREF="index.html" CLASS="home">C:\></A></LI>
   <LI><A HREF="#">#SCUMM</A></LI>
@@ -213,7 +213,7 @@ GET #1,, block& : SEEK #1, block&
 '^Raumnamen erst überspringen da Raumanzahl noch unbekannt
 '<<<<<<<<<<<<<<<<<<
 
-GET #1, LOC(1)+6, nr%   'Header 6 Bytes
+GET #1, LOC(1)+6, nr%   'Header 6 Byte
 DECR nr%
 DIM room_disk(nr%) AS BYTE, room_offs(nr%) AS LONG
 DIM room_name(nr%) AS STRING * 9   'nur bei v4
@@ -255,7 +255,7 @@ NEXT
 
 '>>> nur bei v4 >>>
 SEEK #1, 6   'wieder zu den Raumnamen
-block& = block&\10-1   '9 Bytes für Name / 1 Byte für Raumnummer = 10 Bytes
+block& = block&\10-1   '9 Byte für Name / 1 Byte für Raumnummer = 10 Bytes
 FOR i% = 0 TO block&
    GET #1,, nr?
    GET$ #1, 9, room_name(nr?)
