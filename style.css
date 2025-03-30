@@ -121,6 +121,7 @@ a:hover { text-decoration: underline }
   font: 1em consolas, monospace;
   color: snow;
   max-height: 150px;
+  white-space: pre;
   overflow: auto;
   border: 4px double silver;
   border-radius: 8px;
